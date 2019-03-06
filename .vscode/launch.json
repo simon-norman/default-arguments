@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run tests",
+      "program": "mocha --exit",
+      "args": [
+          "-u",
+          "tdd",
+          "--timeout",
+          "100000",
+          "--colors",
+          "./{,!(node_modules)/**/}*_test.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+  },
+  ]
+}

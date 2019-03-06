@@ -1,8 +1,17 @@
 
+const getOriginalFunctionIfDefaultArgsCalledRepeatedly = (functionToSetDefaults) => {
+  if (functionToSetDefaults.originalFunction) {
+    return functionToSetDefaults.originalFunction
+  }
+  return functionToSetDefaults
+}
+
 const argsFromFunction = (functionToParse) => {
   const functionAsString = functionToParse.toString()
   const argNames = functionAsString.match(/\((.*)\)/)[1]
-  return argNames.split(',')
+  const functionArgs = argNames.split(',')
+
+  return functionArgs
 }
 
 const setDefaultsToArgs = (defaults, functionArgs) => {
@@ -14,22 +23,37 @@ const setDefaultsToArgs = (defaults, functionArgs) => {
   return argsWithDefaults
 }
 
-const setFunctionWithDefaults = (functionToSetDefaults, argsWithDefaults) => {
-  function functionWithDefaults() {
-    for (let i = 0; i < arguments.length; i += 1) {
-      argsWithDefaults[i] = arguments[i]
+const overrideDefaultsWithPassedArgs = (argsWithDefaults, passedArgs) => {
+  const overridenDefaults = argsWithDefaults
+  for (let i = 0; i < passedArgs.length; i += 1) {
+    if (passedArgs[i]) {
+      overridenDefaults[i] = passedArgs[i]
     }
-
-    return functionToSetDefaults.apply(this, argsWithDefaults)
   }
 
+  return overridenDefaults
+}
+
+const setFunctionWithDefaults = function (functionToSetDefaults, argsWithDefaults) {
+  function functionWithDefaults() {
+    const overridenDefaults = overrideDefaultsWithPassedArgs(argsWithDefaults, arguments)
+    return functionToSetDefaults(...overridenDefaults)
+  }
+
+  functionWithDefaults.originalFunction = functionToSetDefaults
   return functionWithDefaults
 }
 
-module.exports = function defaultArgs(functionToSetDefaults, defaults) {
-  const functionArgs = argsFromFunction(functionToSetDefaults)
+module.exports = function defaultArgs(functionToDefault, defaults) {
+  functionToDefault = getOriginalFunctionIfDefaultArgsCalledRepeatedly(functionToDefault)
+
+  const functionArgs = argsFromFunction(functionToDefault)
 
   const argsWithDefaults = setDefaultsToArgs(defaults, functionArgs)
 
-  return setFunctionWithDefaults(functionToSetDefaults, argsWithDefaults)
+  const functionWithDefaults = setFunctionWithDefaults(functionToDefault, argsWithDefaults)
+
+  functionWithDefaults.functionArgs = functionArgs
+
+  return functionWithDefaults
 }

@@ -67,11 +67,11 @@ describe('defaultArguments', function () {
       add4 = defaultArguments(add3, { c: 3 })
     })
 
-    it('should return function that, when called with one arg, applies default to arg not passed', function () {
+    it('should return function that, when called with one arg, returns NaN as other argument is undefined (as no default)', function () {
       expect(isNaN(add4(10))).equals(true)
     })
 
-    it('should return function that, when called with no args, applies new defaults', function () {
+    it('should return function that, when called with both args, uses those args in the function as normal', function () {
       expect(add4(10, 10)).equals(20)
     })
   })

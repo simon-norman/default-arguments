@@ -24,20 +24,21 @@ const setDefaultsToArgs = (defaults, functionArgs) => {
 }
 
 const overrideDefaultsWithPassedArgs = (argsWithDefaults, passedArgs) => {
-  const overridenDefaults = argsWithDefaults
+  const overriddenDefaults = argsWithDefaults
+
   for (let i = 0; i < passedArgs.length; i += 1) {
     if (passedArgs[i]) {
-      overridenDefaults[i] = passedArgs[i]
+      overriddenDefaults[i] = passedArgs[i]
     }
   }
 
-  return overridenDefaults
+  return overriddenDefaults
 }
 
 const setFunctionWithDefaults = function (functionToSetDefaults, argsWithDefaults) {
   function functionWithDefaults() {
-    const overridenDefaults = overrideDefaultsWithPassedArgs(argsWithDefaults, arguments)
-    return functionToSetDefaults(...overridenDefaults)
+    const overriddenDefaults = overrideDefaultsWithPassedArgs(argsWithDefaults, arguments)
+    return functionToSetDefaults(...overriddenDefaults)
   }
 
   functionWithDefaults.originalFunction = functionToSetDefaults
@@ -52,8 +53,6 @@ module.exports = function defaultArgs(functionToDefault, defaults) {
   const argsWithDefaults = setDefaultsToArgs(defaults, functionArgs)
 
   const functionWithDefaults = setFunctionWithDefaults(functionToDefault, argsWithDefaults)
-
-  functionWithDefaults.functionArgs = functionArgs
 
   return functionWithDefaults
 }

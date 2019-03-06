@@ -1,21 +1,35 @@
 
-module.exports = function defaultArguments(functionToSetDefaults, defaults) {
-  const functionAsString = functionToSetDefaults.toString()
-  const argumentNames = functionAsString.match(/\((.*)\)/)[1]
-  const argumentsAsArray = argumentNames.split(',')
+const argsFromFunction = (functionToParse) => {
+  const functionAsString = functionToParse.toString()
+  const argNames = functionAsString.match(/\((.*)\)/)[1]
+  return argNames.split(',')
+}
 
-  const functionArguments = []
-  argumentsAsArray.forEach((argumentName) => {
-    functionArguments.push(defaults[argumentName.trim()])
+const setDefaultsToArgs = (defaults, functionArgs) => {
+  const argsWithDefaults = []
+  functionArgs.forEach((argName) => {
+    argsWithDefaults.push(defaults[argName.trim()])
   })
 
+  return argsWithDefaults
+}
+
+const setFunctionWithDefaults = (functionToSetDefaults, argsWithDefaults) => {
   function functionWithDefaults() {
     for (let i = 0; i < arguments.length; i += 1) {
-      functionArguments[i] = arguments[i]
+      argsWithDefaults[i] = arguments[i]
     }
 
-    return functionToSetDefaults.apply(this, functionArguments)
+    return functionToSetDefaults.apply(this, argsWithDefaults)
   }
 
   return functionWithDefaults
+}
+
+module.exports = function defaultArgs(functionToSetDefaults, defaults) {
+  const functionArgs = argsFromFunction(functionToSetDefaults)
+
+  const argsWithDefaults = setDefaultsToArgs(defaults, functionArgs)
+
+  return setFunctionWithDefaults(functionToSetDefaults, argsWithDefaults)
 }

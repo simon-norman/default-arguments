@@ -4,15 +4,15 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Run tests",
-      "program": "mocha --exit",
+      "name": "Run all tests",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "args": [
           "-u",
           "tdd",
           "--timeout",
           "100000",
           "--colors",
-          "./{,!(node_modules)/**/}*_test.js"
+          "./{,!(node_modules)/**/}*test.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
   },
